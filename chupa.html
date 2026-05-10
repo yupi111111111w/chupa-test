@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チュッパチャプス味診断</title>
+    <style>
+        body {
+            font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+            background-color: #FFEB3B; /* チュッパイエロー */
+            background-image: radial-gradient(#FFF176 20%, transparent 20%), radial-gradient(#FFF176 20%, transparent 20%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0;
+        }
+        #game-container {
+            background: white; padding: 30px; border-radius: 30px;
+            box-shadow: 0 15px 0px #FBC02D; text-align: center;
+            max-width: 450px; width: 90%; border: 4px solid #E60012;
+        }
+        h1 { color: #E60012; font-size: 1.4rem; margin-bottom: 20px; }
+        .btn {
+            display: block; width: 100%; padding: 18px; margin: 12px 0;
+            border: none; border-radius: 50px; background-color: #E60012;
+            color: white; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn:hover { background-color: #C40010; transform: translateY(-3px); }
+        #result { display: none; }
+        .flavor-name { font-size: 2rem; font-weight: bold; color: #E60012; margin: 15px 0; }
+        .result-img { width: 200px; height: 200px; object-fit: contain; border-radius: 20px; margin: 15px 0; border: 3px solid #FFEB3B; }
+        #progress { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="quiz">
+        <div id="progress">質問 <span id="q-num">1</span> / 5</div>
+        <h1 id="question-text">読み込み中...</h1>
+        <div id="choices"></div>
+    </div>
+
+    <div id="result">
+        <h1>あなたにぴったりの味は...</h1>
+        <img id="result-photo" class="result-img" src="" alt="味の写真">
+        <div class="flavor-name" id="flavor-result"></div>
+        <p id="flavor-desc" style="line-height: 1.6; color: #444;"></p>
+        <button class="btn" style="background-color: #444;" onclick="location.reload()">最初からやり直す</button>
+    </div>
+</div>
+
+<script>
+    // 質問を5個に増やしました
+    const questions = [
+        {
+            text: "今の気分を一言でいうと？",
+            answers: [
+                { text: "シャキッとしたい！", points: { cola: 2, ramune: 2, kiwi: 2 } },
+                { text: "ほわ〜んとしたい", points: { strawberry: 1, milk: 2, pudding: 2, peach: 2 } }
+            ]
+        },
+        {
+            text: "今、食べたいのはどっち？",
+            answers: [
+                { text: "もぎたてフルーツ", points: { grape: 2, kiwi: 2, peach: 2, strawberry: 1 } },
+                { text: "甘いスイーツ", points: { pudding: 2, milk: 2, cola: 1 } }
+            ]
+        },
+        {
+            text: "今のラッキーカラーは？",
+            answers: [
+                { text: "情熱の赤・オレンジ系", points: { strawberry: 2, cola: 1, pudding: 2, kiwi: 1 } },
+                { text: "爽やかな青・紫・ピンク系", points: { ramune: 2, grape: 2, peach: 2, milk: 2 } }
+            ]
+        },
+        {
+            text: "今日の予定は？",
+            answers: [
+                { text: "これからバリバリ頑張る！", points: { cola: 2, ramune: 2, kiwi: 1 } },
+                { text: "あとはゆっくり寝るだけ", points: { grape: 1, milk: 2, pudding: 2, peach: 1 } }
+            ]
+        },
+        {
+            text: "自分へのご褒美をあげるなら？",
+            answers: [
+                { text: "リッチで特別な味", points: { kiwi: 2, peach: 2, pudding: 2, milk: 2 } },
+                { text: "いつもの安心する味", points: { cola: 1, ramune: 1, strawberry: 1, grape: 1 } }
+            ]
+        }
+    ];
+
+    const results = {
+        cola: { name: "コーラ", desc: "王道の爽快感！今のあなたには...", image: "https://cdn.sanity.io/images/e4jxgyeh/production/5a021ec7bc67ba8d7abe61c7c62dc8537948de36-1024x1024.png/chupachups-jp-%E3%82%B3%E3%83%BC%E3%83%A9.png?w=400&h=400&fit=fill&auto=format" },
+        ramune: { name: "ラムネ", desc: "シュワシュワの魔法！集中力を高めて、頭をリフレッシュしたいあなたにぴったり。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/dae0341de9c1e7deb15ecfec213e649c8b257361-1024x1024.png/chupachups-jp-%E3%83%A9%E3%83%A0%E3%83%8D.png?w=400&h=400&fit=fill&auto=format" },
+        strawberry: { name: "ストロベリー", desc: "みんな大好き、恋の味。ハッピーな気分をさらに盛り上げてくれるはず！", image: "https://cdn.sanity.io/images/e4jxgyeh/production/9197bbdd68ddb252721da4a665b1074b2d5cd6aa-1024x1024.png/chupachups-jp-%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC.png?w=400&h=400&fit=fill&auto=format" },
+        grape: { name: "グレープ", desc: "落ち着きのあるフルーティーさ。リラックスしたい今のあなたを優しく包んでくれます。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/f43e477f57bf6b7a845d88fd2f8e9ba9839f69f4-1024x1024.png/%E3%82%AF%E3%82%99%E3%83%AC%E3%83%BC%E3%83%95%E3%82%9A.png?w=400&h=400&fit=fill&auto=format" },
+        pudding: { name: "プリン", desc: "とろけるような甘いご褒美！お疲れ気味の心に、濃厚な癒やしをプレゼント。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/16ebef55d59782eba50d39e3fadda7e47976f3d4-1024x1024.png/%E3%83%95%E3%82%9A%E3%83%AA%E3%83%B3.png?w=400&h=400&fit=fill&auto=format" },
+        milk: { name: "ストロベリークリーム", desc: "まろやかリッチな時間。優しさに包まれたいあなたに、贅沢なミルク感を。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/59d4bb3852dd0c7adc8b530601f3390c3ccaace0-1024x1024.png/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%98%E3%82%99%E3%83%AA%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0.png?w=400&h=400&fit=fill&auto=format" },
+        peach: { name: "ホワイトピーチ", desc: "上品でみずみずしい香り。少し贅沢で、優雅な気分転換をしたい時にぴったり。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/3b62dbbf7affe402e4cc66ba45952b9c665a76ca-487x988.png/2025_TBO%20v1_white%20peach_Lollipop_side_72dpi.png?w=400&h=400&fit=fill&auto=format" },
+        kiwi: { name: "ゴールドキウイ", desc: "元気はじけるビタミンカラー！新しいことに挑戦する勇気をくれるジューシーな味。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/1f94cfa76f59248152bddcd05e2fbaed3cecef1e-2368x4803.png/2025_TBO%20v1_Goldkiwi_Lollipop_side_350dpi.png?fp-x=0.5&fp-y=0.28477533038615155&w=400&h=400&fit=fill&crop=focalpoint&auto=format" }
+    };
+
+    let currentQuestion = 0;
+    let totalScores = { cola: 0, ramune: 0, strawberry: 0, grape: 0, pudding: 0, milk: 0, peach: 0, kiwi: 0 };
+
+    function showQuestion() {
+        const q = questions[currentQuestion];
+        document.getElementById("q-num").innerText = currentQuestion + 1;
+        document.getElementById("question-text").innerText = q.text;
+        const choicesDiv = document.getElementById("choices");
+        choicesDiv.innerHTML = "";
+        q.answers.forEach(ans => {
+            const btn = document.createElement("button");
+            btn.className = "btn";
+            btn.innerText = ans.text;
+            btn.onclick = () => nextQuestion(ans.points);
+            choicesDiv.appendChild(btn);
+        });
+    }
+
+    function nextQuestion(points) {
+        for (let key in points) { totalScores[key] += points[key]; }
+        currentQuestion++;
+        if (currentQuestion < questions.length) { showQuestion(); } else { showResult(); }
+    }
+
+    function showResult() {
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("result").style.display = "block";
+        let winner = Object.keys(totalScores).reduce((a, b) => totalScores[a] > totalScores[b] ? a : b);
+        document.getElementById("flavor-result").innerText = results[winner].name;
+        document.getElementById("flavor-desc").innerText = results[winner].desc;
+        document.getElementById("result-photo").src = results[winner].image;
+    }
+
+    showQuestion();
+</script>
+
+</body>
+</html>
