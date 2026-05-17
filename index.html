@@ -69,7 +69,17 @@
         }
 
         .flavor-name { font-size: 2.2rem; font-weight: bold; color: var(--chupa-red); margin: 15px 0; text-shadow: 2px 2px 0px white; }
-        .flavor-desc { line-height: 1.7; color: #333; background: rgba(255,255,255,0.6); padding: 15px; border-radius: 20px; font-size: 0.9rem; }
+        
+        /* テキスト表示部分のスタイルを強化 */
+        .flavor-desc { 
+            line-height: 1.8; /* 行間を広げて読みやすく */
+            color: #333; 
+            background: rgba(255,255,255,0.7); 
+            padding: 20px; 
+            border-radius: 20px; 
+            font-size: 0.95rem; 
+            text-align: center; /* 中央揃え */
+        }
 
         #progress { font-weight: bold; color: #0088CC; margin-bottom: 10px; font-size: 1rem; }
     </style>
@@ -95,7 +105,6 @@
 </div>
 
 <script>
-    // 4択 × 8質問の均等配分ロジック
     const questions = [
         {
             text: "休日の理想的な過ごし方は？",
@@ -120,7 +129,7 @@
             answers: [
                 { text: "「大丈夫！」と明るく励ます", points: { kiwi: 2, ramune: 1 } },
                 { text: "じっくり話を聴いて癒やす", points: { milk: 2, peach: 1 } },
-                { text: "的確なアドバイスを伝える", points: { cola: 2, grape: 1 } },
+                { text: "的なアドバイスを伝える", points: { cola: 2, grape: 1 } },
                 { text: "一緒に美味しいものを食べに行く", points: { pudding: 2, strawberry: 1 } }
             ]
         },
@@ -171,22 +180,23 @@
         }
     ];
 
+    // 各味の記述に改行コード <br> を追加
     const results = {
-        cola: { name: "コーラ", desc: "王道の爽快感！今のあなたには、気分をガツンと切り替えてくれるコーラが最高です。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/5a021ec7bc67ba8d7abe61c7c62dc8537948de36-1024x1024.png/chupachups-jp-%E3%82%B3%E3%83%BC%E3%83%A9.png?w=400&h=400&fit=fill&auto=format" },
-        ramune: { name: "ラムネ", desc: "シュワシュワの魔法！集中力を高めて、頭をリフレッシュしたいあなたにぴったり。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/dae0341de9c1e7deb15ecfec213e649c8b257361-1024x1024.png/chupachups-jp-%E3%83%A9%E3%83%A0%E3%83%8D.png?w=400&h=400&fit=fill&auto=format" },
-        strawberry: { name: "ストロベリー", desc: "みんな大好き、恋の味。ハッピーな気分をさらに盛り上げてくれるはず！", image: "https://cdn.sanity.io/images/e4jxgyeh/production/9197bbdd68ddb252721da4a665b1074b2d5cd6aa-1024x1024.png/chupachups-jp-%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC.png?w=400&h=400&fit=fill&auto=format" },
-        grape: { name: "グレープ", desc: "落ち着きのあるフルーティーさ。リラックスしたい今のあなたを優しく包んでくれます。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/f43e477f57bf6b7a845d88fd2f8e9ba9839f69f4-1024x1024.png/%E3%82%AF%E3%82%99%E3%83%AC%E3%83%BC%E3%83%95%E3%82%9A.png?w=400&h=400&fit=fill&auto=format" },
-        pudding: { name: "プリン", desc: "とろけるような甘いご褒美！お疲れ気味の心に、濃厚な癒やしをプレゼント。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/16ebef55d59782eba50d39e3fadda7e47976f3d4-1024x1024.png/%E3%83%95%E3%82%9A%E3%83%AA%E3%83%B3.png?w=400&h=400&fit=fill&auto=format" },
-        milk: { name: "ストロベリークリーム", desc: "まろやかリッチな時間。優しさに包まれたいあなたに、贅沢なミルク感を。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/59d4bb3852dd0c7adc8b530601f3390c3ccaace0-1024x1024.png/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%98%E3%82%99%E3%83%AA%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0.png?w=400&h=400&fit=fill&auto=format" },
+        cola: { name: "コーラ", desc: "王道の爽快感！<br>今のあなたには、気分をガツンと切り替えてくれる<br>コーラが最高にマッチしています。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/5a021ec7bc67ba8d7abe61c7c62dc8537948de36-1024x1024.png/chupachups-jp-%E3%82%B3%E3%83%BC%E3%83%A9.png?w=400&h=400&fit=fill&auto=format" },
+        ramune: { name: "ラムネ", desc: "シュワシュワの魔法！<br>集中力を高めて、頭をリフレッシュしたい<br>そんな今のあなたにぴったりの味です。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/dae0341de9c1e7deb15ecfec213e649c8b257361-1024x1024.png/chupachups-jp-%E3%83%A9%E3%83%A0%E3%83%8D.png?w=400&h=400&fit=fill&auto=format" },
+        strawberry: { name: "ストロベリー", desc: "みんな大好き、恋の味。<br>ハッピーな気分をさらに盛り上げてくれる<br>甘酸っぱい幸せがあなたを待っています！", image: "https://cdn.sanity.io/images/e4jxgyeh/production/9197bbdd68ddb252721da4a665b1074b2d5cd6aa-1024x1024.png/chupachups-jp-%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC.png?w=400&h=400&fit=fill&auto=format" },
+        grape: { name: "グレープ", desc: "落ち着きのあるフルーティーさ。<br>リラックスしたい今のあなたを、<br>優しく包み込んでくれる上品な味わいです。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/f43e477f57bf6b7a845d88fd2f8e9ba9839f69f4-1024x1024.png/%E3%82%AF%E3%82%99%E3%83%AC%E3%83%BC%E3%83%95%E3%82%9A.png?w=400&h=400&fit=fill&auto=format" },
+        pudding: { name: "プリン", desc: "とろけるような甘いご褒美！<br>お疲れ気味の心に、濃厚でクリーミーな<br>最高の癒やしをプレゼントしてあげましょう。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/16ebef55d59782eba50d39e3fadda7e47976f3d4-1024x1024.png/%E3%83%95%E3%82%9A%E3%83%AA%E3%83%B3.png?w=400&h=400&fit=fill&auto=format" },
+        milk: { name: "ストロベリークリーム", desc: "まろやかリッチな時間。<br>優しさに包まれたい今のあなたには、<br>贅沢なミルク感が心地よく響くはずです。", image: "https://cdn.sanity.io/images/e4jxgyeh/production/59d4bb3852dd0c7adc8b530601f3390c3ccaace0-1024x1024.png/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%98%E3%82%99%E3%83%AA%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0.png?w=400&h=400&fit=fill&auto=format" },
         peach: { 
             name: "ホワイトピーチ", 
-            desc: "上品でみずみずしい香り。少し贅沢で、優雅な気分転換をしたい時にぴったり。", 
+            desc: "上品でみずみずしい香り。<br>少し贅沢で優雅な気分転換をしたい、<br>そんな今のあなたにぴったりの味です。", 
             image: "https://cdn.sanity.io/images/e4jxgyeh/production/3b62dbbf7affe402e4cc66ba45952b9c665a76ca-487x988.png/2025_TBO%20v1_white%20peach_Lollipop_side_72dpi.png?w=400&h=400&fit=fill&auto=format",
             specialStyles: { transform: "scale(2.4) translateY(25%)", transformOrigin: "center center" } 
         },
         kiwi: { 
             name: "ゴールドキウイ", 
-            desc: "元気はじけるビタミンカラー！新しいことに挑戦する勇気をくれるジューシーな味。", 
+            desc: "元気はじけるビタミンカラー！<br>新しいことに挑戦する勇気をくれる、<br>そんなジューシーでパワフルな味わいです。", 
             image: "https://cdn.sanity.io/images/e4jxgyeh/production/1f94cfa76f59248152bddcd05e2fbaed3cecef1e-2368x4803.png/2025_TBO%20v1_Goldkiwi_Lollipop_side_350dpi.png?fp-x=0.5&fp-y=0.28477533038615155&w=400&h=400&fit=fill&crop=focalpoint&auto=format",
             specialStyles: { transform: "scale(2.4) translateY(25%)", transformOrigin: "center center" } 
         }
@@ -228,7 +238,8 @@
         resultImg.style.transformOrigin = "center center";
 
         document.getElementById("flavor-result").innerText = flavorData.name;
-        document.getElementById("flavor-desc").innerText = flavorData.desc;
+        // innerText ではなく innerHTML を使うことで <br> を有効化
+        document.getElementById("flavor-desc").innerHTML = flavorData.desc;
         resultImg.src = flavorData.image;
 
         if (flavorData.specialStyles) {
